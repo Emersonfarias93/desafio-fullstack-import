@@ -16,4 +16,6 @@ public interface LoteProcessamentoRepository extends JpaRepository<LoteProcessam
     long countByLoteId(UUID loteId);
 
     long countByLoteIdAndStatus(UUID loteId, ProcessamentoStatus status);
+
+    List<LoteProcessamento> findByLoteId(UUID loteId);
 }
