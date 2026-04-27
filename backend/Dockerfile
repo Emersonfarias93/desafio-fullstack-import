@@ -1,8 +1,8 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY --from=build /app/target/*-exec.jar app.jar
 
 EXPOSE 8080
 
