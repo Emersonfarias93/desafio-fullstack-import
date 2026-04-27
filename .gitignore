@@ -7,6 +7,10 @@
 ### Local uploads ###
 uploads/
 
+### Environment files ###
+.env
+backend/.env
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
