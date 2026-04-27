@@ -5,7 +5,6 @@ import br.com.esdevcode.backend.model.enums.LoteItemStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public class LoteItem {
     @Column(length = 100)
     private String origem;
 
-    private LocalDate dataCadastro;
+    private LocalDateTime dataCadastro;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)

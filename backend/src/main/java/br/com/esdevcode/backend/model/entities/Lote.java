@@ -19,6 +19,9 @@ public class Lote {
     @Column(nullable = false, length = 255)
     private String nomeArquivo;
 
+    @Column(nullable = false, length = 500)
+    private String caminhoArquivo;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private LoteStatus status;
