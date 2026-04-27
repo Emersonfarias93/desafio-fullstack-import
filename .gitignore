@@ -4,6 +4,9 @@
 *.iml
 *.ipr
 
+### Local uploads ###
+uploads/
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
