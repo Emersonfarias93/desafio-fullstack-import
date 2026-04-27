@@ -1,0 +1,279 @@
+{
+  "info": {
+    "name": "Desafio Fullstack - Importacao de Leads",
+    "_postman_id": "0ddf1c69-64fc-4bb5-a7b3-b30d0c8594bc",
+    "description": "Colecao para testar dashboard, upload de CSV, acompanhamento de lotes, auditoria de itens e consulta de leads.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "lote_id",
+      "value": ""
+    },
+    {
+      "key": "item_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Resumo geral",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard"
+              ]
+            },
+            "description": "Retorna indicadores gerais da aplicacao."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lotes",
+      "item": [
+        {
+          "name": "Upload CSV",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "arquivo",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lotes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lotes"
+              ]
+            },
+            "description": "Envia um arquivo CSV e inicia a pre-validacao do lote."
+          }
+        },
+        {
+          "name": "Listar lotes",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/lotes?page=0&size=8",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lotes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "8"
+                }
+              ]
+            },
+            "description": "Retorna o historico paginado de lotes."
+          }
+        },
+        {
+          "name": "Status do lote",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/lotes/{{lote_id}}/status",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lotes",
+                "{{lote_id}}",
+                "status"
+              ]
+            },
+            "description": "Consulta o status consolidado do lote selecionado."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auditoria de Itens",
+      "item": [
+        {
+          "name": "Listar itens do lote",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/lotes/{{lote_id}}/itens?page=0&size=10&sort=linhaCsv,asc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lotes",
+                "{{lote_id}}",
+                "itens"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "linhaCsv,asc"
+                },
+                {
+                  "key": "status",
+                  "value": "INVALIDO",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista as linhas do lote. O filtro de status e opcional."
+          }
+        },
+        {
+          "name": "Corrigir item do lote",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lead Corrigido\",\n  \"email\": \"lead@email.com\",\n  \"telefone\": \"+55 (83) 99999-9999\",\n  \"origem\": \"Parceiro\",\n  \"dataCadastro\": \"17/04/2026 05:13:48\",\n  \"ignorar\": false\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lotes/{{lote_id}}/itens/{{item_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lotes",
+                "{{lote_id}}",
+                "itens",
+                "{{item_id}}"
+              ]
+            },
+            "description": "Atualiza manualmente uma linha do lote para revalidacao."
+          }
+        },
+        {
+          "name": "Ignorar item do lote",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Lead Corrigido\",\n  \"email\": \"lead@email.com\",\n  \"telefone\": \"+55 (83) 99999-9999\",\n  \"origem\": \"Parceiro\",\n  \"dataCadastro\": \"17/04/2026 05:13:48\",\n  \"ignorar\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/lotes/{{lote_id}}/itens/{{item_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "lotes",
+                "{{lote_id}}",
+                "itens",
+                "{{item_id}}"
+              ]
+            },
+            "description": "Marca uma linha como ignorada na auditoria do lote."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "Buscar leads",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/leads?page=0&size=10&sort=criadoEm,desc",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "leads"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                },
+                {
+                  "key": "sort",
+                  "value": "criadoEm,desc"
+                },
+                {
+                  "key": "nome",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "origem",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Consulta leads com filtros opcionais por nome, email ou origem."
+          }
+        }
+      ]
+    }
+  ]
+}

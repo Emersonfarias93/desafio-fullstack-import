@@ -1,121 +1,105 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
+import { AppLayout } from './components/AppLayout'
+import { isProcessingLote } from './constants/importStatus'
+import { useImportWorkspace } from './hooks/useImportWorkspace'
+import { ArchitecturePage } from './pages/ArchitecturePage'
+import { AuditoriaPage } from './pages/AuditoriaPage'
+import { DashboardPage } from './pages/DashboardPage'
+import { ImportPage } from './pages/ImportPage'
+import { LeadsPage } from './pages/LeadsPage'
+import { MessagingPage } from './pages/MessagingPage'
+import { ProcessingPage } from './pages/ProcessingPage'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [activePage, setActivePage] = useState('dashboard')
+  const workspace = useImportWorkspace()
+  const processingLote = workspace.lotes.content.find(isProcessingLote) || null
+  const importLote = processingLote
+  const importProgress = importLote?.progressoPercentual || 0
+
+  const selectLote = (lote) => {
+    workspace.selectLote(lote)
+  }
+
+  const pages = {
+    dashboard: (
+      <DashboardPage
+        dashboard={workspace.dashboard}
+        lotes={workspace.lotes}
+        currentLote={workspace.currentLote}
+        progress={workspace.progress}
+        taxaErro={workspace.taxaErro}
+        onSelectLote={selectLote}
+      />
+    ),
+    importacao: (
+      <ImportPage
+        currentLote={importLote}
+        selectedFile={workspace.selectedFile}
+        isDragging={workspace.isDragging}
+        isProcessing={workspace.isProcessing}
+        isImportLocked={workspace.isImportLocked}
+        progress={importProgress}
+        setSelectedFile={workspace.setSelectedFile}
+        setIsDragging={workspace.setIsDragging}
+        processFile={workspace.processFile}
+      />
+    ),
+    auditoria: (
+      <AuditoriaPage
+        lotes={workspace.lotes}
+        currentLote={workspace.currentLote}
+        loteItems={workspace.loteItems}
+        itemStatus={workspace.itemStatus}
+        setItemStatus={workspace.setItemStatus}
+        loadLoteItems={workspace.loadLoteItems}
+        onSelectLote={selectLote}
+      />
+    ),
+    leads: (
+      <LeadsPage
+        leads={workspace.leads}
+        filters={workspace.filters}
+        setFilters={workspace.setFilters}
+        loadLeads={workspace.loadLeads}
+        createLead={workspace.createLeadRecord}
+        updateLead={workspace.updateLeadRecord}
+        deleteLead={workspace.deleteLeadRecord}
+      />
+    ),
+    processamento: (
+      <ProcessingPage
+        lotes={workspace.lotes}
+        currentLote={workspace.currentLote}
+        progress={workspace.progress}
+        onSelectLote={selectLote}
+      />
+    ),
+    mensageria: (
+      <MessagingPage
+        lotes={workspace.lotes}
+        currentLote={workspace.currentLote}
+        progress={workspace.progress}
+        onSelectLote={selectLote}
+      />
+    ),
+    arquitetura: <ArchitecturePage />,
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <AppLayout
+      activePage={activePage}
+      onNavigate={setActivePage}
+      onRefresh={() => workspace.refreshWorkspace().catch((exception) => workspace.setError(exception.message))}
+      socketStatus={workspace.socketStatus}
+      message={workspace.message}
+      error={workspace.error}
+      onDismissMessage={() => workspace.setMessage('')}
+      onDismissError={() => workspace.setError('')}
+    >
+      {pages[activePage] || pages.dashboard}
+    </AppLayout>
   )
 }
 

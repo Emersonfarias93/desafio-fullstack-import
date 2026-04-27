@@ -3,7 +3,6 @@ package br.com.esdevcode.backend.model.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,7 +36,7 @@ public class Lead {
     @Column(length = 100)
     private String origem;
 
-    private LocalDate dataCadastro;
+    private LocalDateTime dataCadastro;
 
     @Column(nullable = false)
     private LocalDateTime criadoEm;
