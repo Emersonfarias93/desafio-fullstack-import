@@ -6,11 +6,18 @@ export async function apiRequest(path, options = {}) {
   if (!response.ok) {
     let detail = 'Nao foi possivel completar a solicitacao.'
 
+    if (response.status === 413) {
+      detail = 'Arquivo muito grande. O tamanho maximo permitido foi excedido.'
+    }
+
     try {
       const body = await response.json()
       detail = body.message || detail
     } catch {
-      detail = await response.text()
+      const bodyText = await response.text()
+      if (bodyText.trim()) {
+        detail = bodyText
+      }
     }
 
     throw new Error(detail)

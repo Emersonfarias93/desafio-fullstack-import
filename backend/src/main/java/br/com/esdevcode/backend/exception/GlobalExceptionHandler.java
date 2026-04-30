@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -159,6 +160,34 @@ import java.util.List;
             return buildResponse(
                     HttpStatus.PAYLOAD_TOO_LARGE,
                     "Arquivo muito grande. O tamanho máximo permitido é 100MB.",
+                    request.getRequestURI(),
+                    List.of()
+            );
+        }
+
+        @ExceptionHandler(MultipartException.class)
+        public ResponseEntity<ApiErrorResponse> handleMultipartException(
+                MultipartException exception,
+                HttpServletRequest request
+        ) {
+            String exceptionMessage = exception.getMessage() == null ? "" : exception.getMessage().toLowerCase();
+            boolean isPayloadTooLarge = exceptionMessage.contains("size")
+                    || exceptionMessage.contains("too large")
+                    || exceptionMessage.contains("larger than")
+                    || exceptionMessage.contains("exceed");
+
+            if (isPayloadTooLarge) {
+                return buildResponse(
+                        HttpStatus.PAYLOAD_TOO_LARGE,
+                        "Arquivo muito grande. O tamanho maximo permitido e 100MB.",
+                        request.getRequestURI(),
+                        List.of()
+                );
+            }
+
+            return buildResponse(
+                    HttpStatus.BAD_REQUEST,
+                    "Nao foi possivel processar o upload do arquivo enviado.",
                     request.getRequestURI(),
                     List.of()
             );
