@@ -3,6 +3,20 @@ import { API_BASE } from '../services/api'
 
 const reconnectDelayMs = 3000
 
+function buildSocketUrl() {
+  if (!API_BASE) {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+    return `${protocol}//${window.location.host}/ws/lotes`
+  }
+
+  if (API_BASE.startsWith('http://') || API_BASE.startsWith('https://')) {
+    return `${API_BASE.replace(/^http/, 'ws')}/ws/lotes`
+  }
+
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  return `${protocol}//${window.location.host}${API_BASE}/ws/lotes`
+}
+
 export function useLoteStatusSocket({ onStatus }) {
   const [socketStatus, setSocketStatus] = useState('connecting')
   const onStatusRef = useRef(onStatus)
@@ -15,7 +29,7 @@ export function useLoteStatusSocket({ onStatus }) {
     let socket = null
     let reconnectTimer = null
     let shouldReconnect = true
-    const socketUrl = `${API_BASE.replace(/^http/, 'ws')}/ws/lotes`
+    const socketUrl = buildSocketUrl()
 
     function connect() {
       setSocketStatus('connecting')
